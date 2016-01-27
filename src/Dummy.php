@@ -15,7 +15,7 @@ class Dummy
 
     function getVersion()
     {
-        $version = $this->client::VERSION;
+        $version = ClientInterface::VERSION;
 
         return substr($version, 0, 3);
     }
