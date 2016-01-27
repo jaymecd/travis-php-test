@@ -4,7 +4,6 @@ sudo: false
 
 cache:
   directories:
-    - vendor
     - $HOME/.composer/cache
 
 php:
@@ -14,7 +13,7 @@ php:
 env:
   - GUZZLE=^5.3.0
   - GUZZLE=^6.1.1
-  - PREFER=lowest
+  - LOWEST=true
 
 matrix:
   fast_finish: true
@@ -23,12 +22,11 @@ before_install:
   - phpenv config-rm xdebug.ini
   - composer self-update
   - composer validate
-  - if [[ -n "$GITHUB_TOKEN" ]]; then composer config -g github-oauth.github.com "$GITHUB_TOKEN"; fi
-  - if [[ ! $PREFER ]]; then composer require --no-update guzzlehttp/guzzle "$GUZZLE"; fi
+  - if [ -n "$GITHUB_TOKEN" ]; then composer config -g github-oauth.github.com "$GITHUB_TOKEN"; fi
+  - if [ -z $LOWEST ]; then composer require --no-update guzzlehttp/guzzle "$GUZZLE"; fi
 
 install:
-  - if [[ ! $PREFER ]]; then composer install -n -a --prefer-dist; fi
-  - if [[ $PREFER = "lowest" ]]; then composer update -n -a --prefer-dist --prefer-lowest --prefer-stable; fi
+  - if [ -z $LOWEST ]; then composer install -n -a --prefer-dist; else composer update -n -a --prefer-dist --prefer-lowest --prefer-stable; fi
 
 script:
   - vendor/bin/phpunit -v
