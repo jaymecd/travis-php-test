@@ -1,8 +1,11 @@
 language: php
 
+sudo: false
+
 cache:
   directories:
-    - $HOME/.composer
+    - vendor
+    - $HOME/.composer/cache
 
 php:
   - 5.5
@@ -10,20 +13,21 @@ php:
   - 7.0
 
 env:
-  - GUZZLE_VERSION=^5.3.0
-  - GUZZLE_VERSION=^6.1.1
+  - dependencies=lowest
+  - dependencies=highest
 
 matrix:
   fast_finish: true
 
 before_install:
+  - phpenv config-rm xdebug.ini
   - composer self-update
-  - composer --version
-  - composer require --no-update --dev guzzlehttp/guzzle "$GUZZLE_VERSION"
   - composer validate
+  - if [ -n "$GITHUB_OAUTH_TOKEN" ]; then composer config -g github-oauth.github.com "$GITHUB_OAUTH_TOKEN" >/dev/null 2>&1; fi
 
 install:
-  - composer install --no-interaction --prefer-dist --classmap-authoritative
+  - if [ "$dependencies" = "lowest" ];  then composer update -n -a --prefer-dist --prefer-lowest; fi;
+  - if [ "$dependencies" = "highest" ]; then composer update -n -a --prefer-dist; fi;
 
 script:
   - ./vendor/bin/phpunit --coverage-text -v
