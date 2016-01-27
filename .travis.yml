@@ -4,7 +4,6 @@ sudo: false
 
 cache:
   directories:
-    - vendor
     - $HOME/.composer/cache
 
 php:
@@ -23,10 +22,11 @@ before_install:
   - composer self-update
   - composer validate
   - if [ -n "$GITHUB_TOKEN" ]; then composer config -g github-oauth.github.com "$GITHUB_TOKEN"; fi
+  - if [ "$DEPS" = "lowest" ];  then export PREFER_LOWEST="--prefer-lowest"; fi
+  - if [ "$DEPS" = "highest" ]; then export PREFER_LOWEST=""; fi
 
 install:
-  - if [ "$DEPS" = "lowest" ]; then  composer update -n -a --prefer-dist --prefer-lowest; fi
-  - if [ "$DEPS" = "highest" ]; then composer update -n -a --prefer-dist; fi
+  - composer update -n -a --prefer-dist $PREFER_LOWEST
 
 script:
   - vendor/bin/phpunit -v
