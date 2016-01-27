@@ -4,6 +4,7 @@ sudo: false
 
 cache:
   directories:
+    - vendor
     - $HOME/.composer/cache
 
 php:
@@ -26,7 +27,7 @@ before_install:
   - if [ "$DEPS" = "highest" ]; then export PREFER_LOWEST=""; fi
 
 install:
-  - composer update -n -a --prefer-dist $PREFER_LOWEST
+  - travis_retry composer update -n -a --prefer-dist $PREFER_LOWEST
 
 script:
   - vendor/bin/phpunit -v
