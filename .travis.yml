@@ -13,8 +13,8 @@ php:
   - 7.0
 
 env:
-  - dependencies=lowest
-  - dependencies=highest
+  - DEPS=lowest
+  - DEPS=highest
 
 matrix:
   fast_finish: true
@@ -23,11 +23,11 @@ before_install:
   - phpenv config-rm xdebug.ini
   - composer self-update
   - composer validate
-  - [ -n "$GITHUB_OAUTH_TOKEN" ] && composer config -g github-oauth.github.com "$GITHUB_OAUTH_TOKEN" >/dev/null 2>&1
+  - if [ -n "$GITHUB_TOKEN" ]; then composer config -g github-oauth.github.com "$GITHUB_TOKEN"; fi
 
 install:
-  - [ "$dependencies" = "lowest" ]  && composer update -n -a --prefer-dist --prefer-lowest
-  - [ "$dependencies" = "highest" ] && composer update -n -a --prefer-dist
+  - if [ "$DEPS" = "lowest" ]; then  composer update -n -a --prefer-dist --prefer-lowest; fi
+  - if [ "$DEPS" = "highest" ]; then composer update -n -a --prefer-dist; fi
 
 before_script:
   - phpenv config-add xdebug.ini
