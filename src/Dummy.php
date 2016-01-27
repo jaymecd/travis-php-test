@@ -3,14 +3,17 @@
 namespace Trial;
 
 use GuzzleHttp\ClientInterface;
+use Psr\Log\LoggerInterface;
 
 class Dummy
 {
     private $client;
+    private $logger;
 
-    public function __construct(ClientInterface $client)
+    public function __construct(ClientInterface $client, LoggerInterface $logger)
     {
         $this->client = $client;
+        $this->logger = $logger;
     }
 
     function getVersion()

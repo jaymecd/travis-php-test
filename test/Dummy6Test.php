@@ -4,6 +4,7 @@ namespace Trial\Test;
 
 use GuzzleHttp\Client;
 use GuzzleHttp\ClientInterface;
+use Mongolog\Logger;
 use Trial\Dummy;
 
 class Dummy6Test extends \PHPUnit_Framework_TestCase
@@ -19,7 +20,7 @@ class Dummy6Test extends \PHPUnit_Framework_TestCase
 
     function testVersion5()
     {
-        $sut = new Dummy(new Client());
+        $sut = new Dummy(new Client(), new Logger());
 
         $this->assertSame('6.1', $sut->getVersion());
     }
