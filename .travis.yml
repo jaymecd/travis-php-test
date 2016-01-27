@@ -12,8 +12,9 @@ php:
   - 7.0
 
 env:
-  - DEPS=lowest
-  - DEPS=highest
+  - GUZZLE=^5.3.0
+  - GUZZLE=^6.1.1
+  - PREFER=lowest
 
 matrix:
   fast_finish: true
@@ -22,12 +23,12 @@ before_install:
   - phpenv config-rm xdebug.ini
   - composer self-update
   - composer validate
-  - if [ -n "$GITHUB_TOKEN" ]; then composer config -g github-oauth.github.com "$GITHUB_TOKEN"; fi
-  - if [ "$DEPS" = "lowest" ];  then export PREFER_LOWEST="--prefer-lowest"; fi
-  - if [ "$DEPS" = "highest" ]; then export PREFER_LOWEST=""; fi
+  - if [[ -n "$GITHUB_TOKEN" ]]; then composer config -g github-oauth.github.com "$GITHUB_TOKEN"; fi
+  - if [[ ! $PREFER ]]; then composer require --no-update guzzlehttp/guzzle "$GUZZLE"; fi
 
 install:
-  - travis_retry composer update -n -a --prefer-dist $PREFER_LOWEST
+  - if [[ ! $PREFER ]]; then composer install -n -a --prefer-dist; fi
+  - if [[ $PREFER = "lowest" ]]; then composer update -n -a --prefer-dist --prefer-lowest --prefer-stable; fi
 
 script:
   - vendor/bin/phpunit -v
