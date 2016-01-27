@@ -23,11 +23,14 @@ before_install:
   - phpenv config-rm xdebug.ini
   - composer self-update
   - composer validate
-  - if [ -n "$GITHUB_OAUTH_TOKEN" ]; then composer config -g github-oauth.github.com "$GITHUB_OAUTH_TOKEN" >/dev/null 2>&1; fi
+  - [ -n "$GITHUB_OAUTH_TOKEN" ] && composer config -g github-oauth.github.com "$GITHUB_OAUTH_TOKEN" >/dev/null 2>&1
 
 install:
-  - if [ "$dependencies" = "lowest" ];  then composer update -n -a --prefer-dist --prefer-lowest; fi;
-  - if [ "$dependencies" = "highest" ]; then composer update -n -a --prefer-dist; fi;
+  - [ "$dependencies" = "lowest" ]  && composer update -n -a --prefer-dist --prefer-lowest
+  - [ "$dependencies" = "highest" ] && composer update -n -a --prefer-dist
+
+before_script:
+  - phpenv config-add xdebug.ini
 
 script:
-  - ./vendor/bin/phpunit --coverage-text -v
+  - vendor/bin/phpunit --coverage-text -v
