@@ -1,11 +1,11 @@
 sudo: false
 
+language: php
+
 cache:
   directories:
     - vendor
     - $HOME/.composer/cache
-
-language: php
 
 matrix:
   fast_finish: true
@@ -14,12 +14,12 @@ matrix:
     - php: 5.5
       env: guzzle=^5.3.0 monolog=1.10
     - php: 5.5
-      env: lowest=true
+      env: deps=lowest
     - php: 7.0
     - php: 7.0
       env: guzzle=^5.3.0 monolog=1.10
     - php: 7.0
-      env: lowest=true
+      env: deps=lowest
 
 before_install:
   - phpenv config-rm xdebug.ini
@@ -30,19 +30,21 @@ before_install:
         composer config -g github-oauth.github.com "$GITHUB_TOKEN"
       fi
   - |
-      if [[ ! $lowest && $guzzle ]]; then
+      if [[ ! $deps && $guzzle ]]; then
         composer require guzzlehttp/guzzle "$guzzle" --no-update
       fi
   - |
-      if [[ ! $lowest && $monolog ]]; then
+      if [[ ! $deps && $monolog ]]; then
         composer require monolog/monolog "$monolog" --no-update
       fi
 
 install:
   - |
-      if [[ ! $lowest ]]; then
+      if [[ ! $deps ]]; then
         travis_retry composer install -n -a --prefer-dist
-      else
+      fi
+  - |
+      if [[ $deps = "lowest" ]]; then
         travis_retry composer update -n -a --prefer-dist --prefer-lowest --prefer-stable
       fi
   - composer info -i -t
