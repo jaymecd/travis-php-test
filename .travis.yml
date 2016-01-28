@@ -13,7 +13,6 @@ matrix:
     - php: 5.5
       env: deps=low
     - php: 7.0
-      env: deps=high
     - php: 7.0
       env: guzzle=^5.3.0 monolog=1.10
     - php: 7.0
@@ -24,15 +23,18 @@ matrix:
     - php: hhvm
 
 before_install:
-  - | # Disable Xdebug
-      phpenv config-rm xdebug.ini || true
-  - composer self-update
-  - composer validate
+  - |
+      # Disable Xdebug extension ...
+      sed -i'' -e 's/^/;/g' ~/.phpenv/versions/$(phpenv version-name)/etc/conf.d/xdebug.ini || true
+      php -v | grep -i xdebug || true
   - |
       # Configuring composer ...
       if [[ $GITHUB_TOKEN ]]; then
         composer config -g github-oauth.github.com "$GITHUB_TOKEN"
       fi
+
+      composer self-update
+      composer validate
   - |
       # Preparing Guzzle dependency ...
       if [[ ! $deps && $guzzle ]]; then
@@ -54,10 +56,18 @@ install:
       else
         travis_retry composer install -n -a --prefer-dist
       fi
-  - composer info -i
+  - |
+      # Listing installed packages ...
+      composer info -i
+
+before_script:
+  - |
+      # Enable Xdebug extension ...
+      sed -i'' -e 's/^;//g' ~/.phpenv/versions/$(phpenv version-name)/etc/conf.d/xdebug.ini || true
+      php -v | grep -i xdebug || true
 
 script:
-  - vendor/bin/phpunit -v
+  - vendor/bin/phpunit --coverage-text -v
 
 notifications:
   email: false
