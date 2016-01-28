@@ -33,7 +33,7 @@ before_install:
         composer config -g github-oauth.github.com "$GITHUB_TOKEN"
       fi
 
-      composer self-update
+      # composer self-update # see https://docs.travis-ci.com/user/languages/php#Installing-Composer-packages
       composer validate
   - |
       # Preparing Guzzle dependency ...
@@ -50,14 +50,18 @@ install:
   - |
       # Installing dependencies ...
       if [[ $deps = "high" ]]; then
+        echo "> Installing HIGH deps ..."
         travis_retry composer update -n -a --prefer-dist
       elif [[ $deps = "low" ]]; then
+        echo "> Installing LOW deps ..."
         travis_retry composer update -n -a --prefer-dist --prefer-lowest
       else
+        echo "> Installing DEFAULT deps ..."
         travis_retry composer install -n -a --prefer-dist
       fi
   - |
       # Listing installed packages ...
+      echo "> Composer packages:"
       composer info -i
 
 before_script:
