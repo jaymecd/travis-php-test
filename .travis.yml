@@ -1,47 +1,52 @@
-language: php
-
 sudo: false
 
 cache:
   directories:
-    - $HOME/.composer/cache/files
+    - vendor
+    - $HOME/.composer/cache
+
+language: php
 
 php:
   - 5.5
   - 7.0
 
 env:
-  - GUZZLE=^5.3.0 MONOLOG=1.10
-  - GUZZLE=^6.1.1 MONOLOG=1.17
-  - LOWEST=true
+  - guzzle=^5.3.0 monolog=1.10
+  - guzzle=^6.1.1 monolog=1.17
+  - lowest=true
 
 matrix:
   fast_finish: true
 
 before_install:
-  - phpenv config-rm xdebug.ini || true
+  - phpenv config-rm xdebug.ini
   - composer self-update
   - composer validate
   - |
-      if [ -n "$GITHUB_TOKEN" ]; then
+      if [[ $GITHUB_TOKEN ]]; then
         composer config -g github-oauth.github.com "$GITHUB_TOKEN"
       fi
   - |
-      if [ -n "$GUZZLE" ]; then
-        composer require --no-update guzzlehttp/guzzle "$GUZZLE"
+      if [[ ! $lowest && $guzzle ]]; then
+        composer require guzzlehttp/guzzle "$guzzle" --no-update
       fi
   - |
-      if [ -n "$MONOLOG" ]; then
-        composer require --no-update monolog/monolog "$MONOLOG"
+      if [[ ! $lowest && $monolog ]]; then
+        composer require monolog/monolog "$monolog" --no-update
       fi
 
 install:
   - |
-      if [ -z "$LOWEST" ]; then
+      if [[ ! $lowest ]]; then
         travis_retry composer install -n -a --prefer-dist
       else
         travis_retry composer update -n -a --prefer-dist --prefer-lowest --prefer-stable
       fi
+  - composer info -i
 
 script:
   - vendor/bin/phpunit -v
+
+notifications:
+  email: false
