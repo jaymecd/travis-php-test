@@ -10,9 +10,6 @@ matrix:
   fast_finish: true
   include:
     - php: 5.5
-      env: deps=high
-    - php: 5.5
-      env: guzzle=^5.3.0 monolog=1.10
     - php: 5.5
       env: deps=low
     - php: 7.0
@@ -21,6 +18,10 @@ matrix:
       env: guzzle=^5.3.0 monolog=1.10
     - php: 7.0
       env: deps=low
+    - php: hhvm
+    - php: nightly
+  allow_failures:
+    - php: hhvm
 
 before_install:
   - phpenv config-rm xdebug.ini
