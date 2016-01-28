@@ -25,30 +25,30 @@ before_install:
   - composer self-update
   - composer validate
   - |
-      # "Configuring composer ..."
+      # Configuring composer ...
       if [[ $GITHUB_TOKEN ]]; then
         composer config -g github-oauth.github.com "$GITHUB_TOKEN"
       fi
   - |
-      # "Preparing Guzzle dependency ..."
+      # Preparing Guzzle dependency ...
       if [[ ! $deps && $guzzle ]]; then
         composer require guzzlehttp/guzzle "$guzzle" --no-update
       fi
   - |
-      # "Prepare Monolog dependency ..."
+      # Preparing Monolog dependency ...
       if [[ ! $deps && $monolog ]]; then
         composer require monolog/monolog "$monolog" --no-update
       fi
 
 install:
   - |
-      echo "Installing dependencies ..."
+      # Installing dependencies ...
       if [[ $deps = "lowest" ]]; then
         travis_retry composer update -n -a --prefer-dist --prefer-lowest --prefer-stable
       else
         travis_retry composer install -n -a --prefer-dist
       fi
-  - composer info -i -t
+  - composer info -i
 
 script:
   - vendor/bin/phpunit -v
