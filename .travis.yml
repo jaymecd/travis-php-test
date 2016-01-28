@@ -4,7 +4,6 @@ language: php
 
 cache:
   directories:
-    - vendor
     - $HOME/.composer/cache
 
 matrix:
@@ -40,12 +39,11 @@ before_install:
 
 install:
   - |
-      if [[ ! $deps ]]; then
-        travis_retry composer install -n -a --prefer-dist
-      fi
-  - |
+      echo "Installing composer dependencies"
       if [[ $deps = "lowest" ]]; then
         travis_retry composer update -n -a --prefer-dist --prefer-lowest --prefer-stable
+      else
+        travis_retry composer install -n -a --prefer-dist
       fi
   - composer info -i -t
 
