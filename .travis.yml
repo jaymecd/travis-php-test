@@ -51,13 +51,13 @@ install:
       # Installing dependencies ...
       if [[ $deps = "high" ]]; then
         echo "> Installing HIGH deps ..."
-        travis_retry composer update -n -a --prefer-dist
+        travis_retry composer update -n -o --prefer-dist
       elif [[ $deps = "low" ]]; then
         echo "> Installing LOW deps ..."
-        travis_retry composer update -n -a --prefer-dist --prefer-lowest
+        travis_retry composer update -n -o --prefer-dist --prefer-lowest
       else
         echo "> Installing DEFAULT deps ..."
-        travis_retry composer install -n -a --prefer-dist
+        travis_retry composer install -n -o --prefer-dist
       fi
   - |
       # Listing installed packages ...
