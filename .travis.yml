@@ -10,15 +10,17 @@ matrix:
   fast_finish: true
   include:
     - php: 5.5
+      env: deps=high
     - php: 5.5
       env: guzzle=^5.3.0 monolog=1.10
     - php: 5.5
-      env: deps=lowest
+      env: deps=low
     - php: 7.0
+      env: deps=high
     - php: 7.0
       env: guzzle=^5.3.0 monolog=1.10
     - php: 7.0
-      env: deps=lowest
+      env: deps=low
 
 before_install:
   - phpenv config-rm xdebug.ini
@@ -43,8 +45,10 @@ before_install:
 install:
   - |
       # Installing dependencies ...
-      if [[ $deps = "lowest" ]]; then
-        travis_retry composer update -n -a --prefer-dist --prefer-lowest --prefer-stable
+      if [[ $deps = "high" ]]; then
+        travis_retry composer update -n -a --prefer-dist
+      elif [[ $deps = "low" ]]; then
+        travis_retry composer update -n -a --prefer-dist --prefer-lowest
       else
         travis_retry composer install -n -a --prefer-dist
       fi
