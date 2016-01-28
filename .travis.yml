@@ -7,17 +7,19 @@ cache:
 
 language: php
 
-php:
-  - 5.5
-  - 7.0
-
-env:
-  - guzzle=^5.3.0 monolog=1.10
-  - guzzle=^6.1.1 monolog=1.17
-  - lowest=true
-
 matrix:
   fast_finish: true
+  include:
+    - php: 5.5
+    - php: 5.5
+      env: guzzle=^5.3.0 monolog=1.10
+    - php: 5.5
+      env: lowest=true
+    - php: 7.0
+    - php: 7.0
+      env: guzzle=^5.3.0 monolog=1.10
+    - php: 7.0
+      env: lowest=true
 
 before_install:
   - phpenv config-rm xdebug.ini
@@ -43,7 +45,7 @@ install:
       else
         travis_retry composer update -n -a --prefer-dist --prefer-lowest --prefer-stable
       fi
-  - composer info -i
+  - composer info -i -t
 
 script:
   - vendor/bin/phpunit -v
