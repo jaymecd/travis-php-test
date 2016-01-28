@@ -24,7 +24,8 @@ matrix:
     - php: hhvm
 
 before_install:
-  - phpenv config-rm xdebug.ini
+  - | # Disable Xdebug
+      phpenv config-rm xdebug.ini || true
   - composer self-update
   - composer validate
   - |
