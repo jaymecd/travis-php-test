@@ -38,9 +38,9 @@ before_install:
 install:
   - |
       if [ -z "$LOWEST" ]; then
-        travis_retry composer install -n -a --prefer-dist;
+        travis_retry composer install -n -a --prefer-dist
       else
-        travis_retry composer update -n -a --prefer-dist --prefer-lowest --prefer-stable;
+        travis_retry composer update -n -a --prefer-dist --prefer-lowest --prefer-stable
       fi
 
 script:
